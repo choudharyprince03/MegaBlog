@@ -16,7 +16,7 @@ export class Serives{
         this.bucket = new Storage(this.client); 
     }
     
-    async creatPost({title, slug, content, featuredImage, status, userId }){
+    async createPost({title, slug, content, featuredImage, status, userId }){
         try {
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
