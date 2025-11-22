@@ -67,7 +67,7 @@ const Header = () => {
                 {/* Animated Underline */}
                 <span className="
                   absolute bottom-0 left-1/2 -translate-x-1/2 w-0
-                  h-[2px] bg-blue-600 rounded-full
+                  h-2px bg-blue-600 rounded-full
                   transition-all duration-300 group-hover:w-4/5
                 "></span>
               </button>
