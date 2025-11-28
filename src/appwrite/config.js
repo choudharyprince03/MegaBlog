@@ -1,17 +1,17 @@
 import conf from "../conf/conf";
 import { Client, ID, Databases, Storage, Query, Account} from "appwrite";
 
-export class Serives{
+export class Services{
     client = new Client()
-    Databases
-    bucket 
+    databases;
+    bucket;
 
     constructor(){
         this.client
         .setEndpoint(conf.appwriteUrl)
         .setProject(conf.appwriteProjectId)
 
-        this.account = new Account(this.client);
+        
         this.databases = new Databases(this.client); 
         this.bucket = new Storage(this.client); 
     }
@@ -31,7 +31,7 @@ export class Serives{
                 }
             )
         } catch (error) {
-            throw error; 
+             console.log("Appwrite serive :: createPost :: error", error);
         }
     }
 
@@ -49,22 +49,25 @@ export class Serives{
                 }
             )
         } catch (error) {
-            throw error 
+            console.log("Appwrite serive :: updatePost :: error", error);
+
         }
     }
 
     async deletePost(slug){
         try {
-            return await this.databases.deleteDocument(
+            await this.databases.deleteDocument(
             conf.appwriteDatabaseId,
             conf.appwriteCollectionId, 
             slug)  
+            return true;
         } 
+        
         catch (error) {
-            throw error
-            return false; 
+             console.log("Appwrite serive :: deletePost :: error", error);
+            return false
         }
-        return true; 
+   
     }
 
     async getPost(slug){
@@ -74,11 +77,10 @@ export class Serives{
                 conf.appwriteCollectionId,
                 slug
             )
-            return true; 
 
         } catch (error) {
-            throw error 
-            return false; 
+           console.log("Appwrite serive :: getPost :: error", error);
+            return false;
         }
     }
     
@@ -88,12 +90,11 @@ export class Serives{
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 queries,
-
             )
             
         } catch (error) {
-            throw error ;r
-            return false; 
+           console.log("Appwrite serive :: getPosts :: error", error);
+            return false
         }
 
     }
@@ -105,33 +106,32 @@ export class Serives{
                     ID.unique(), 
                     file, 
                 )
-                return true; 
+
         } catch (error) {
-            throw error 
-            return false; 
+              console.log("Appwrite serive :: uploadFile :: error", error);
+            return false 
         }
     }
-    async deleteFile(fileID){
+    async deleteFile(fileId){
         try {
             await this.bucket.deleteFile(
                 conf.appwriteBucketId,
-                fileID
+                fileId
             )
             return true ; 
             
         } catch (error) {
-            throw error 
-            return false; 
+            console.log("Appwrite serive :: deleteFile :: error", error);
+            return false 
         }
     }
-    getFilePreview(fileID){
+   getFilePreview(fileId){
         return this.bucket.getFilePreview(
-            conf.appwriteBucketId, 
-            fileID, 
-            
+            conf.appwriteBucketId,
+            fileId
         )
     }
 }
-const service = new Serives()
+const service = new Services()
 
 export default service; 

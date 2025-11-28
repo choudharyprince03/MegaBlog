@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import authService from './appwrite/auth';
 import { login,logout } from './features/authSlice';
 import { Outlet } from 'react-router-dom';
-
+import { Header,Footer } from './components';
 
 function App() {
   const [loading, setLoading] = useState(true); 
@@ -23,20 +23,17 @@ function App() {
     .finally(()=>setLoading(false))
   },[])
 
-  return !loading ? (
+   return !loading ? (
     <div className='min-h-screen flex flex-wrap content-between bg-gray-400'>
-        <div className='w-full block'>
-             <Outlet /> 
-        </div>
+      <div className='w-full block'>
+        <Header />
+        <main>
+           <Outlet />
+        </main>
+        <Footer />
+      </div>
     </div>
-  )        :
-  (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-      <div className="h-12 w-12 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
-         <p className="text-lg font-medium text-gray-700">Loading...</p>
-    </div>
-
-  ); 
+  ) : null
 }
 
 export default App

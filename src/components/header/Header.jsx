@@ -1,6 +1,5 @@
 import {Container,LogoutBtn,Logo} from "../index"
 import { Link,useNavigate } from "react-router-dom"
-import Button from "../Button"
 
 //useSelector for the information, if the user is logged in or not. 
 import { useSelector } from "react-redux"
@@ -32,11 +31,12 @@ const Header = () => {
       name: "Add Post",
       slug: "/add-post",
       active: authStatus,
-  },
+  }
+
   ]
 
   return (
-<header className="py-4 bg-white/70 backdrop-blur-xl border-b border-gray-200 shadow-sm sticky top-0 z-50">
+<header className="py-4 bg-white/70 backdrop-blur-xl border-b border-gray-200 shadow-sm top-0 z-50">
   <Container>
     <nav className="flex items-center">
 

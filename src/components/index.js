@@ -10,10 +10,15 @@ import SignUp from "./SignUp";
 import PostForm from "./Post-form/PostForm";
 import RTE from "./RTE";
 import Select from "./Select";
+import PostCard from "./PostCard";
+import AuthLayout from "./AuthLayout";
+
 export {
+    AuthLayout,
     Select,
     RTE,
     PostForm,
+    PostCard,
     Login,
     SignUp,
     Input,

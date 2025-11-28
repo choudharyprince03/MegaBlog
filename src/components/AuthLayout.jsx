@@ -7,6 +7,7 @@ const Protected = ({children,requiredAuth = true}) => {
     const [loader, setLoader] = useState(true); 
     const navigate = useNavigate(); 
     const isLoggedIn = useSelector(state => state.auth.status)
+    
     useEffect(()=>{
        if(requiredAuth && !isLoggedIn) navigate('/login'); 
 
