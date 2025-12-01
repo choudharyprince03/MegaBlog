@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import appwriteService from "../appwrite/config";
 import {Container, PostCard} from '../components'
 
-function Home() {
+const Home =()=> {
     const [posts, setPosts] = useState([])
 
     useEffect(() => {
@@ -20,8 +20,9 @@ function Home() {
                     <div className="flex flex-wrap min-h-screen">
                         <div className="p-2 w-full">
                             <h1 className="text-2xl font-bold hover:text-gray-500">
-                                Login to read posts
+                                No posts available
                             </h1>
+                            <p className="text-sm text-gray-500">Sign in to create posts.</p>
                         </div>
                     </div>
                 </Container>

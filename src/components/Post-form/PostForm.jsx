@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/config";
@@ -18,86 +18,115 @@ export default function PostForm({ post }) {
     const navigate = useNavigate();
     const userData = useSelector((state) => state.auth.userData);
 
+    // -------------------------------
+    // ⭐ Main submit handler
+    // -------------------------------
     const submit = async (data) => {
-        if (post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+        let featuredImageId = post?.featuredImage; // keep old image by default
 
-            if (file) {
-                appwriteService.deleteFile(post.featuredImage);
-            }
+        // If user uploads a new image
+        if (data.image?.[0]) {
+            const uploaded = await appwriteService.uploadFile(data.image[0]);
 
-            const dbPost = await appwriteService.updatePost(post.$id, {
-                ...data,
-                featuredImage: file ? file.$id : undefined,
-            });
-
-            if (dbPost) {
-                navigate(`/post/${dbPost.$id}`);
-            }
-        } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
-
-            if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
-
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
+            if (uploaded) {
+                // delete old image ONLY after successful upload
+                if (post?.featuredImage) {
+                    await appwriteService.deleteFile(post.featuredImage);
                 }
+                featuredImageId = uploaded.$id;
             }
         }
+
+        // UPDATE POST
+        if (post) {
+            const dbPost = await appwriteService.updatePost(post.$id, {
+                ...data,
+                featuredImage: featuredImageId,
+            });
+
+            if (dbPost) navigate(`/post/${dbPost.$id}`);
+            return;
+        }
+
+        // CREATE POST
+        const dbPost = await appwriteService.createPost({
+            ...data,
+            featuredImage: featuredImageId,
+            userId: userData.$id,
+        });
+
+        if (dbPost) navigate(`/post/${dbPost.$id}`);
     };
 
+    // ------------------------------------------------
+    // Generate slug automatically from title
+    // ------------------------------------------------
     const slugTransform = useCallback((value) => {
-        if (value && typeof value === "string")
-            return value
-                .trim()
-                .toLowerCase()
-                .replace(/[^a-zA-Z\d\s]+/g, "-")
-                .replace(/\s/g, "-");
-
-        return "";
+        if (!value) return "";
+        return value
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-zA-Z\d\s]+/g, "-")
+            .replace(/\s/g, "-");
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const subscription = watch((value, { name }) => {
             if (name === "title") {
-                setValue("slug", slugTransform(value.title), { shouldValidate: true });
+                setValue("slug", slugTransform(value.title), {
+                    shouldValidate: true,
+                });
             }
         });
 
         return () => subscription.unsubscribe();
     }, [watch, slugTransform, setValue]);
 
+    // ------------------------------------------
+    // JSX
+    // ------------------------------------------
     return (
         <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
+            {/* Left Section */}
             <div className="w-2/3 px-2">
                 <Input
                     label="Title :"
                     placeholder="Title"
-                    className="mb-4"
+                    className="mb-4 bg-gray-200 ml-1 rounded pl-2"
                     {...register("title", { required: true })}
                 />
+
                 <Input
                     label="Slug :"
                     placeholder="Slug"
-                    className="mb-4"
+                    className="mb-4 bg-gray-200 ml-1 rounded pl-2"
                     {...register("slug", { required: true })}
-                    onInput={(e) => {
-                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
-                    }}
+                    onInput={(e) =>
+                        setValue("slug", slugTransform(e.currentTarget.value), {
+                            shouldValidate: true,
+                        })
+                    }
                 />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+
+                <RTE
+                    label="Content :"
+                    name="content"
+                    control={control}
+                    defaultValue={getValues("content")}
+                />
             </div>
+
+            {/* Right Section */}
             <div className="w-1/3 px-2">
                 <Input
                     label="Featured Image :"
                     type="file"
-                    className="mb-4"
+                    className="mb-4 p-2 rounded-lg cursor-pointer bg-white"
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
+
+                {/* Image Preview */}
                 {post && (
                     <div className="w-full mb-4">
                         <img
@@ -107,13 +136,19 @@ export default function PostForm({ post }) {
                         />
                     </div>
                 )}
+
                 <Select
                     options={["active", "inactive"]}
                     label="Status"
-                    className="mb-4"
+                    className="mb-4 cursor-pointer"
                     {...register("status", { required: true })}
                 />
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+
+                <Button
+                    type="submit"
+                    bgColor={post ? "bg-green-500" : "bg-blue-500"}
+                    className="w-full mt-2 cursor-pointer"
+                >
                     {post ? "Update" : "Submit"}
                 </Button>
             </div>

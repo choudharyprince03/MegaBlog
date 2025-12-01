@@ -125,12 +125,20 @@ export class Services{
             return false 
         }
     }
-   getFilePreview(fileId){
-        return this.bucket.getFilePreview(
+    getFilePreview(fileId) {
+        return this.bucket.getFileDownload(
             conf.appwriteBucketId,
             fileId
-        )
+        );
     }
+
+    getFileDownload(fileId) {
+        return this.bucket.getFileDownload(
+            conf.appwriteBucketId,
+            fileId
+        );
+    }
+
 }
 const service = new Services()
 

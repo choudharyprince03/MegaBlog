@@ -33,17 +33,17 @@ export default function Post() {
     };
 
     return post ? (
-        <div className="py-8 min-h-screen flex ">
-            <Container>
-                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
+        <div className="py-8 flex ">
+            <Container  className="">
+                    <div className="max-h-2/3 max-w-1/3 flex  justify-center mb-4 relative border rounded-xl p-2">
                     <img
-                        src={appwriteService.getFilePreview(post.featuredImage)}
+                        src={appwriteService.getFilePreview(post.featuredImage).toString()}
                         alt={post.title}
-                        className="rounded-xl"
+                        className="rounded-xl max-h-1/4"
                     />
 
                     {isAuthor && (
-                        <div className="absolute right-7 top-15 space-x-2">
+                        <div className="absolute right-2 top-2 space-x-2">
                             <Link to={`/edit-post/${post.$id}`}>
                                 <Button bgColor="bg-green-600" className=" bg-green-700
                                 text-white cursor-pointer hover:bg-green-800 shadow-2xl
