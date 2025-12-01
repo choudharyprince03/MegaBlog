@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/blogged-high-resolution-logo-grayscale-transparent.png";
+import logo from "/public/assets/blogged-high-resolution-logo-grayscale-transparent.png";
 
 const Logo = ({ width = "100px" }) => {
   return (
