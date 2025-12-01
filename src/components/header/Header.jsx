@@ -36,14 +36,14 @@ const Header = () => {
   ]
 
   return (
-<header className="py-4 bg-white backdrop-blur-xl border-b border-gray-200 shadow-sm top-0 z-50">
+<header className="py-4 bg-gray-50 top-0 z-50">
   <Container>
-    <nav className="flex items-center">
+    <nav className="flex items-center">  
 
       {/* Logo */}
       <div className="mr-8 cursor-pointer">
         <Link to="/">
-          <Logo width="70px" />
+          <Logo width="150px"/>
         </Link>
       </div>
 

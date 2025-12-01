@@ -18,7 +18,7 @@ const AllPosts = () => {
             <div className='flex flex-wrap min-h-screen'>
 
                 {posts.map((post)=>(
-                    <div key={post.$id} className="p-2 w-1/4 x">
+                    <div key={post.$id} className="p-2 w-1/2 ">
                         <PostCard {...post} />
                     </div>
                 ))}

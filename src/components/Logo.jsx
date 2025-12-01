@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
+import logo from "../assets/blogged-high-resolution-logo-grayscale-transparent.png";
 
-function Logo({width='100px'}) {
+const Logo = ({ width = "100px" }) => {
   return (
-    <div>
-      LOGO
-    </div>
-  )
-}
+    <img
+      src={logo}
+      alt="LOGO"
+      style={{ width: width }} // apply custom width
+    />
+  );
+};
 
-export default Logo
+export default Logo;
