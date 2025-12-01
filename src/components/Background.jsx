@@ -1,6 +1,6 @@
 const Background = () => (
   <div style={{
-    backgroundImage: 'url(public/assets/BG4.png)',
+    backgroundImage: 'url(/assets/BG4.png)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
