@@ -1,1 +1,9 @@
-@import "tailwindcss"
+@import "tailwindcss";
+
+body {
+  background-image: url('src/assets/BG4.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* gives a clean parallax feel */
+}

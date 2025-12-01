@@ -36,9 +36,9 @@ const Header = () => {
   ]
 
   return (
-<header className="py-4 bg-gray-50 top-0 z-50">
+<header className="py-4 bg-white/10 mt-5 mx-10 rounded-[2.5rem] shadow-sm border border-gray-100 top-0 z-50">
   <Container>
-    <nav className="flex items-center">  
+    <nav className="flex items-center justify-between text-gray-800 font-bold">  
 
       {/* Logo */}
       <div className="mr-8 cursor-pointer">
@@ -48,28 +48,21 @@ const Header = () => {
       </div>
 
       {/* Navigation Items */}
-      <ul className="flex ml-auto items-center space-x-1 sm:space-x-2">
+      <ul className="flex items-center mr-10 ">
 
         {navItems.map((item) =>
           item.active ? (
             <li key={item.name}>
               <button
-                onClick={() => navigate(item.slug)}
-                className="
-                  relative px-5 py-2 text-sm font-medium text-gray-700
-                  transition-all duration-200 rounded-full
-                  hover:text-blue-600
-                  hover:bg-blue-50
-                "
-              >
+                  onClick={() => navigate(item.slug)}
+                  className="
+                    relative px-5 py-2 text-lg font-semibold font-stretch-125% text-gray-800/80
+                    transition-all duration-200 rounded-full
+                    hover:text-xl
+                    hover:text-black cursor-pointer
+                  "
+                >
                 {item.name}
-
-                {/* Animated Underline */}
-                <span className="
-                  absolute bottom-0 left-1/2 -translate-x-1/2 w-0
-                  h-2px bg-blue-600 rounded-full
-                  transition-all duration-300 group-hover:w-4/5
-                "></span>
               </button>
             </li>
           ) : null

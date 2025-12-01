@@ -7,10 +7,10 @@ import { Twitter, Instagram, Linkedin, Github } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <section className=" py-12 px-4 sm:px-6 lg:px-8">
       
       {/* Main Card Container */}
-      <div className="mx-auto max-w-7xl bg-white rounded-[2.5rem] px-8 py-12 shadow-sm border border-gray-100 lg:px-16 lg:py-16">
+      <div className="mx-auto max-w-7xl bg-white/10 rounded-[2.5rem] px-8 py-12 shadow-sm border border-gray-100 lg:px-16 lg:py-16">
          
 
 
