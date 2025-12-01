@@ -5,6 +5,7 @@ import authService from './appwrite/auth';
 import { login, logout } from './features/authSlice';
 import { Outlet } from 'react-router-dom';
 import { Header, Footer } from './components';
+import Background from './components/Background';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -39,15 +40,14 @@ function App() {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col ">
-      {/* 🌟 FOLLOWING DIV */}
-      <div
-        className="pointer-events-none -z-10 fixed w-3 h-3 rounded-full bg-white/30 shadow-sm border border-gray-100  transition-transform duration-150"
-        style={{
-          transform: `translate(${pos.x - 3}px, ${pos.y - 10}px)`
-        }}
-      />
+      <div className="relative min-h-screen flex flex-col">
+      <Background />
+      {/* FOLLOWING DIV */}
+      <div style={{ transform: `translate(${pos.x - 3}px, ${pos.y - 10}px)` }} 
+           className="pointer-events-none fixed w-3 h-3 rounded-full
+                  bg-white/30 shadow-sm border border-gray-100  -z-1 transition-transform duration-200">
 
+      </div>
       <Header />
       <main className="w-full block">
         <Outlet />
