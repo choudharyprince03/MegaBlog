@@ -25,7 +25,8 @@ function App() {
   useEffect(() => {
     authService.getCurrentUser()
       .then((user) => {
-        if (user) dispatch(login(user));
+        // authSlice expects payload shaped as { userData }
+        if (user) dispatch(login({ userData: user }));
         else dispatch(logout());
       })
       .finally(() => setLoading(false));
