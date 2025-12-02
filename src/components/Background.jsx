@@ -1,13 +1,21 @@
 const Background = () => (
   <div style={{
     position: 'fixed',
-    width: '100%',
-    height: '100%',
-    zIndex: -1,
     top: 0,
-    left: 0
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    zIndex: -1,
+    overflow: 'hidden', // Ensures no scrollbars appear from the background
+    backgroundColor: '#A7C7D8' // Fallback color while loading
   }}>
-    <svg width="100%" height="100%" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <svg 
+      width="100%" 
+      height="100%" 
+      viewBox="0 0 1600 900" 
+      xmlns="http://www.w3.org/2000/svg" 
+      preserveAspectRatio="xMidYMid slice" 
+    >
       <defs>
         <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#A7C7D8" />
@@ -32,15 +40,19 @@ const Background = () => (
         </linearGradient>
       </defs>
 
+      {/* Main Background Rect */}
       <rect width="1600" height="900" fill="url(#bgGradient)" />
 
+      {/* Wave Shapes */}
       <path d="M1600,0 L1600,900 L800,900 C600,900 400,800 400,600 C400,400 800,200 1200,200 L1600,0 Z" fill="url(#shapeGradient2)" />
       <path d="M1600,0 L1600,900 L1200,900 C1000,900 800,800 800,600 C800,400 1200,200 1400,100 L1600,0 Z" fill="url(#shapeGradient1)" />
 
+      {/* Floating Bubbles */}
       <path d="M600,200 C710.457,200 800,289.543 800,400 C800,444.183 785.577,485.095 761.006,518.171 L800,600 L718.171,561.006 C685.095,585.577 644.183,600 600,600 C489.543,600 400,510.457 400,400 C400,289.543 489.543,200 600,200 Z" fill="url(#bubbleGradient1)" />
       <path d="M500,100 C610.457,100 700,189.543 700,300 C700,344.183 685.577,385.095 661.006,418.171 L700,500 L618.171,461.006 C585.095,485.577 544.183,500 500,500 C389.543,500 300,410.457 300,300 C300,189.543 389.543,100 500,100 Z" fill="url(#bubbleGradient2)" />
 
-      <text x="1300" y="850" fontFamily="Arial, sans-serif" fontSize="60" fill="#745E77">Blogged</text>
+      {/* Text: Moved slightly left to ensure better visibility on varying screens */}
+      <text x="1250" y="850" fontFamily="Arial, sans-serif" fontSize="60" fill="#745E77" opacity="0.8">Blogged</text>
   
     </svg>
   </div>
