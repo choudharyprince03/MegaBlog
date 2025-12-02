@@ -31,7 +31,7 @@ const Login = () => {
      <div
     className='flex items-center justify-center w-full '
     >
-        <div className={`mx-10  w-full max-w-lg bg-gray-100/85 rounded-xl p-10 shadow-sm border border-gray-200`}>
+        <div className={`mx-3 w-full max-w-lg bg-gray-100/85 rounded-xl p-10 shadow-sm border border-gray-200`}>
         <div className="mb-2 flex justify-center">
                     <span className="inline-block w-full max-w-[100px]">
                         <Logo width="100%" />
