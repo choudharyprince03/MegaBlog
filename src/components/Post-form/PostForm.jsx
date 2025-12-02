@@ -22,41 +22,36 @@ export default function PostForm({ post }) {
     // ⭐ Main submit handler
     // -------------------------------
     const submit = async (data) => {
-        let featuredImageId = post?.featuredImage; // keep old image by default
-
-        // If user uploads a new image
-        if (data.image?.[0]) {
-            const uploaded = await appwriteService.uploadFile(data.image[0]);
-
-            if (uploaded) {
-                // delete old image ONLY after successful upload
-                if (post?.featuredImage) {
-                    await appwriteService.deleteFile(post.featuredImage);
-                }
-                featuredImageId = uploaded.$id;
-            }
-        }
-
-        // UPDATE POST
         if (post) {
+            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+
+            if (file) {
+                appwriteService.deleteFile(post.featuredImage);
+            }
+
             const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
-                featuredImage: featuredImageId,
+                featuredImage: file ? file.$id : undefined,
             });
 
-            if (dbPost) navigate(`/post/${dbPost.$id}`);
-            return;
+            if (dbPost) {
+                navigate(`/post/${dbPost.$id}`);
+            }
+        } else {
+            const file = await appwriteService.uploadFile(data.image[0]);
+
+            if (file) {
+                const fileId = file.$id;
+                data.featuredImage = fileId;
+                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
+
+                if (dbPost) {
+                    navigate(`/post/${dbPost.$id}`);
+                }
+            }
         }
-
-        // CREATE POST
-        const dbPost = await appwriteService.createPost({
-            ...data,
-            featuredImage: featuredImageId,
-            userId: userData.$id,
-        });
-
-        if (dbPost) navigate(`/post/${dbPost.$id}`);
     };
+
 
     // ------------------------------------------------
     // Generate slug automatically from title
