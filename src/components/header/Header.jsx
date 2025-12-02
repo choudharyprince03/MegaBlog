@@ -41,7 +41,25 @@ const Header = () => {
   };
 
   return (
-    <header className="py-4 bg-white/10 mt-5 mx-10 rounded-[2.5rem] shadow-sm border border-gray-100 top-0 z-50 relative">
+    <header
+  className="
+    py-4 
+    bg-white/10 
+    mt-5  
+
+    mx-3         /* default for phones (<640px) */
+    sm:mx-5      /* small screens (≥640px) */
+    md:mx-10     /* medium screens (≥768px) */
+    lg:mx-14     /* large screens (≥1024px) */
+
+    rounded-[2.5rem] 
+    shadow-sm 
+    border border-gray-100 
+    top-0 
+    z-50 
+    relative
+  "
+>
       <Container>
         <nav className="flex items-center justify-between text-gray-800 font-bold">
           {/* Logo */}

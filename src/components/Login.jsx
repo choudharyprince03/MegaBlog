@@ -29,9 +29,9 @@ const Login = () => {
     }
   return (
      <div
-    className='flex items-center justify-center w-full'
+    className='flex items-center justify-center w-full '
     >
-        <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
+        <div className={`mx-10  w-full max-w-lg bg-gray-100/85 rounded-xl p-10 shadow-sm border border-gray-200`}>
         <div className="mb-2 flex justify-center">
                     <span className="inline-block w-full max-w-[100px]">
                         <Logo width="100%" />
@@ -47,7 +47,7 @@ const Login = () => {
                         Sign Up
                     </Link>
         </p>
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
+        {error && <p className="text-red-700 mt-8 text-center">{error}</p>}
         <form onSubmit={handleSubmit(login)} className='mt-8'>
             <div className='space-y-5'>
                 <Input
@@ -72,7 +72,8 @@ const Login = () => {
                 />
                 <Button
                 type="submit"
-                className="w-full bg-blue-200 p-4 rounded-xl"
+                bgColor="bg-blue-400/80"
+                className="w-full p-4 rounded-xl cursor-pointer  hover:bg-blue-600 hover:text-white"
                 >Sign in</Button>
             </div>
         </form>

@@ -30,18 +30,24 @@ const Home =()=> {
         )
     }
     return (
-        <div className='w-full py-8'>
-            <Container>
-                <div className='flex flex-wrap min-h-screen'>
-                    {posts.map((post) => (
-                        <div key={post.$id} className='p-2 w-1/4'>
-                            <PostCard {...post} />
-                        </div>
-                    ))}
-                </div>
-            </Container>
-        </div>
-    )
+  <div className='w-full py-8'>
+    <Container>
+      <div className="grid 
+        grid-cols-1       /* 1 column on phones */
+        sm:grid-cols-2    /* 2 columns on small screens */
+        md:grid-cols-3    /* 3 columns on medium screens */
+        lg:grid-cols-4    /* 4 columns on large screens */
+        gap-8
+        min-h-screen"
+      >
+        {posts.map((post) => (
+          <PostCard key={post.$id} {...post} />
+        ))}
+      </div>
+    </Container>
+  </div>
+)
+
 }
 
 export default Home

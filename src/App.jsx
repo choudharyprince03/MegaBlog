@@ -45,8 +45,8 @@ function App() {
       <Background />
       {/* FOLLOWING DIV */}
       <div style={{ transform: `translate(${pos.x - 3}px, ${pos.y - 10}px)` }} 
-           className="pointer-events-none fixed w-3 h-3 rounded-full
-                  bg-white/30 shadow-sm border border-gray-100  -z-1 transition-transform duration-200">
+           className="pointer-events-none fixed w-3 h-3 rounded-full 
+                  bg-white/30 shadow-sm border border-gray-100  -z-1 transition-transform duration-200 hidden lg:block">
 
       </div>
       <Header />
