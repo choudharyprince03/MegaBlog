@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/config";
-import authService from "../../appwrite/auth";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -23,65 +22,33 @@ export default function PostForm({ post }) {
     // ⭐ Main submit handler
     // -------------------------------
     const submit = async (data) => {
-        try {
-            // Basic validation: ensure image selected when creating a new post (form already enforces required, but guard here)
-            const hasImageFile = Array.isArray(data.image) && data.image[0];
+        if (post) {
+            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
-            // If updating an existing post
-            if (post) {
-                let uploadedFile = null;
-                if (hasImageFile) {
-                    uploadedFile = await appwriteService.uploadFile(data.image[0]);
-                    if (!uploadedFile) throw new Error("Image upload failed");
-
-                    // delete old image only after successful upload
-                    if (post.featuredImage) {
-                        await appwriteService.deleteFile(post.featuredImage);
-                    }
-                }
-
-                const dbPost = await appwriteService.updatePost(post.$id, {
-                    ...data,
-                    featuredImage: uploadedFile ? uploadedFile.$id : post.featuredImage,
-                });
-
-                if (dbPost) navigate(`/post/${dbPost.$id}`);
-                return;
+            if (file) {
+                appwriteService.deleteFile(post.featuredImage);
             }
 
-            // Creating a new post
-            if (!hasImageFile) {
-                // if image is required, show message
-                alert("Please select a featured image before submitting a new post.");
-                return;
+            const dbPost = await appwriteService.updatePost(post.$id, {
+                ...data,
+                featuredImage: file ? file.$id : undefined,
+            });
+
+            if (dbPost) {
+                navigate(`/post/${dbPost.$id}`);
             }
+        } else {
+            const file = await appwriteService.uploadFile(data.image[0]);
 
-            const uploaded = await appwriteService.uploadFile(data.image[0]);
-            if (!uploaded) throw new Error("Image upload failed");
+            if (file) {
+                const fileId = file.$id;
+                data.featuredImage = fileId;
+                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
 
-            data.featuredImage = uploaded.$id;
-
-            // Ensure we have a valid user id; try redux state first then fallback to Appwrite
-            let currentUserId = userData?.$id;
-            if (!currentUserId) {
-                try {
-                    const current = await authService.getCurrentUser();
-                    currentUserId = current?.$id;
-                } catch (err) {
-                    console.warn("Could not fetch current user from Appwrite:", err);
+                if (dbPost) {
+                    navigate(`/post/${dbPost.$id}`);
                 }
             }
-
-            if (!currentUserId) {
-                alert("You must be logged in to create a post.");
-                return;
-            }
-
-            const dbPost = await appwriteService.createPost({ ...data, userId: currentUserId });
-            if (dbPost) navigate(`/post/${dbPost.$id}`);
-        } catch (error) {
-            console.error("Post submit error:", error);
-            alert("Failed to submit post. See console for details.");
         }
     };
 
