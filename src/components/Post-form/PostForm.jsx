@@ -1,129 +1,180 @@
- import { useCallback, useEffect } from "react";
- import { useForm } from "react-hook-form"; 
- import { Button, Input, RTE, Select } from ".."; 
- import appwriteService from "../../appwrite/config"; 
- import { useNavigate } from "react-router-dom"; 
- import { useSelector } from "react-redux";
+import { useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Button, Input, RTE, Select } from "..";
+import appwriteService from "../../appwrite/config";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function PostForm({ post }) {
-    const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
-        defaultValues: {
-            title: post?.title || "",
-            slug: post?.$id || "",
-            content: post?.content || "",
-            status: post?.status || "active",
-        },
+  const { register, handleSubmit, watch, setValue, control, getValues } =
+    useForm({
+      defaultValues: {
+        title: post?.title || "",
+        slug: post?.slug || "",
+        content: post?.content || "",
+        status: post?.status || "active",
+      },
     });
 
-    const navigate = useNavigate();
-    const userData = useSelector((state) => state.auth.userData);
+  const navigate = useNavigate();
+  const userData = useSelector((state) => state.auth.userData);
 
-    const submit = async (data) => {
-        if (post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+  // -------------------------------------------------------------------
+  // SAFARI FIX → Convert HEIC to JPG
+  // -------------------------------------------------------------------
+  const convertIfHEIC = async (file) => {
+    if (!file || !file.type.includes("heic")) return file;
 
-            if (file) appwriteService.deleteFile(post.featuredImage);
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
 
-            const dbPost = await appwriteService.updatePost(post.$id, {
-                ...data,
-                featuredImage: file ? file.$id : undefined,
-            });
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
 
-            if (dbPost) navigate(`/post/${dbPost.$id}`);
-        } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
+          canvas.toBlob(
+            (blob) => {
+              const newFile = new File([blob], "converted.jpg", {
+                type: "image/jpeg",
+              });
+              resolve(newFile);
+            },
+            "image/jpeg",
+            0.9
+          );
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
 
-            if (file) {
-                data.featuredImage = file.$id;
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
+  // -------------------------------------------------------------------
+  // SUBMIT
+  // -------------------------------------------------------------------
+  const submit = async (data) => {
+    try {
+      let fileID = post?.featuredImage || null;
 
-                if (dbPost) navigate(`/post/${dbPost.$id}`);
-            }
+      // Handle image
+      if (data.image && data.image[0]) {
+        let file = data.image[0];
+
+        // iPhone Safari fix
+        file = await convertIfHEIC(file);
+
+        const uploaded = await appwriteService.uploadFile(file);
+        if (uploaded) {
+          if (post?.featuredImage) {
+            await appwriteService.deleteFile(post.featuredImage);
+          }
+          fileID = uploaded.$id;
         }
-    };
+      }
 
-    // Slug auto-update
-    const slugTransform = useCallback((value) => {
-        if (!value) return "";
-        return value.trim()
-            .toLowerCase()
-            .replace(/[^a-zA-Z\d\s]+/g, "-")
-            .replace(/\s/g, "-");
-    }, []);
+      let dbPost;
 
-    useEffect(() => {
-        const subscription = watch((value, { name }) => {
-            if (name === "title") {
-                setValue("slug", slugTransform(value.title), { shouldValidate: true });
-            }
+      if (post) {
+        dbPost = await appwriteService.updatePost(post.$id, {
+          ...data,
+          featuredImage: fileID,
         });
-        return () => subscription.unsubscribe();
-    }, [watch, slugTransform, setValue]);
+      } else {
+        dbPost = await appwriteService.createPost({
+          ...data,
+          featuredImage: fileID,
+          userId: userData.$id,
+        });
+      }
 
-    return (
-        <form 
-            onSubmit={handleSubmit(submit)}
-            className="flex flex-col gap-6"
-        >
-            <Input
-                label="Title :"
-                placeholder="Title"
-                className="mb-4 bg-gray-200 rounded pl-2"
-                {...register("title", { required: true })}
-            />
+      if (!dbPost) throw new Error("Post creation failed");
 
-            <Input
-                label="Slug :"
-                placeholder="Slug"
-                className="mb-4 bg-gray-200 rounded pl-2"
-                {...register("slug", { required: true })}
-                onInput={(e) =>
-                    setValue("slug", slugTransform(e.currentTarget.value), {
-                        shouldValidate: true,
-                    })
-                }
-            />
+      // SAFARI FIX → Delay navigation slightly
+      setTimeout(() => {
+        navigate(`/post/${dbPost.$id}`, { replace: true });
+      }, 10);
+    } catch (e) {
+      console.error("Safari PostForm Error:", e);
+      alert("Something went wrong. Try again.");
+    }
+  };
 
-            <Input
-                label="Featured Image :"
-                type="file"
-                className="mb-4 p-2 rounded-lg cursor-pointer bg-white"
-                accept="image/png, image/jpg, image/jpeg, image/gif"
-                {...register("image", { required: !post })}
-            />
+  // -------------------------------------------------------------------
+  // Slug auto update
+  // -------------------------------------------------------------------
+  const slugTransform = useCallback((value) => {
+    if (!value) return "";
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-zA-Z\d\s]+/g, "-")
+      .replace(/\s/g, "-")
+      .replace(/-+/g, "-");
+  }, []);
 
-            {post && (
-                <div className="w-full mb-4">
-                    <img
-                        src={appwriteService.getFilePreview(post.featuredImage)}
-                        alt={post.title}
-                        className="rounded-lg w-full"
-                    />
-                </div>
-            )}
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === "title") {
+        setValue("slug", slugTransform(value.title), { shouldValidate: true });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, slugTransform, setValue]);
 
-            <Select
-                options={["active", "inactive"]}
-                label="Status"
-                className="mb-4 cursor-pointer"
-                {...register("status", { required: true })}
-            />
+  // -------------------------------------------------------------------
+  // UI
+  // -------------------------------------------------------------------
+  return (
+    <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-6">
+      <Input label="Title :" 
+            placeholder="Enter post title"
+      {...register("title", { required: true })} />
 
-            <RTE
-                label="Content :"
-                name="content"
-                control={control}
-                defaultValue={getValues("content")}
-            />
+      <Input
+        label="Slug :"
+        placeholder="auto-generated from title"
+        {...register("slug", { required: true })}
+        onInput={(e) =>
+          setValue("slug", slugTransform(e.currentTarget.value))
+        }
+      />
 
-            <Button
-                type="submit"
-                bgColor={post ? "bg-green-500" : "bg-blue-500"}
-                className="w-full mt-2 cursor-pointer"
-                
-            >
-                {post ? "Update" : "Submit"}
-            </Button>
-        </form>
-    );
+      <Input
+        placeholder="Upload featured image"
+        label="Featured Image :"
+        type="file"
+        accept="image/*"
+        {...register("image", { required: !post })}
+      />
+
+      {post?.featuredImage && (
+        <img
+          src={appwriteService.getFilePreview(post.featuredImage)}
+          className="rounded-lg w-full"
+        />
+      )}
+
+      <Select
+        options={["active", "inactive"]}
+        label="Status"
+        {...register("status", { required: true })}
+      />
+
+      <RTE
+        label="Content :"
+        control={control}
+        name="content"
+        defaultValue={getValues("content")}
+      />
+
+      <Button type="submit" className="w-full p-4 rounded-xl">
+        {post ? "Update" : "Submit"}
+      </Button>
+    </form>
+  );
 }

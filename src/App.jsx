@@ -34,9 +34,18 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-2xl text-gray-600">
-        Loading...
-      </div>
+          <div className="relative min-h-screen">
+            <div
+              style={{ transform: `translate(${pos.x - 3}px, ${pos.y - 10}px)` }}
+              className="pointer-events-none fixed w-10 h-10 rounded-full 
+                        bg-black/30 shadow-sm border border-gray-100 
+                        transition-transform duration-200 hidden lg:block"
+            />
+            <h1 className='flex justify-center items-center min-h-screen'>Loading...</h1>
+            <Background />
+
+          </div>
+      
     );
   }
 
