@@ -1,12 +1,13 @@
 import {useEffect, useState} from 'react'
 import appwriteService from "../appwrite/config";
 import {Container, PostCard} from '../components'
+import { Query } from 'appwrite';
 
 const Home =()=> {
     const [posts, setPosts] = useState([])
 
     useEffect(() => {
-        appwriteService.getPosts().then((posts) => {
+        appwriteService.getPosts([Query.equal("status","active")]).then((posts) => {
             if (posts) {
                 setPosts(posts.documents)
             }

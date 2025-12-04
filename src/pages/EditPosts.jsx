@@ -30,6 +30,7 @@ const EditPost = () => {
                 }
             });
         }
+
     };
 
     return post ? (

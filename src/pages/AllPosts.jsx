@@ -1,20 +1,41 @@
 import { useState, useEffect } from "react";
 import { Container, PostCard } from "../components";
-import appwriteService from "../appwrite/config";
+import { useSelector } from "react-redux";
+import appwriteService from "../appwrite/config"
+import { Query } from "appwrite";
 
 const AllPosts = () => {
-    const [posts, setPosts] = useState([]);
+    const [posts,setPosts] = useState([])
+    const userData = useSelector((state)=>state.auth.userData); 
+    const userId = userData?.$id
+    const [loading, setLoading] = useState(false)
 
-    // Fetch posts correctly
-    useEffect(() => {
-        appwriteService.getPosts().then((posts) => {
-            if (posts) {
-                setPosts(posts.documents);
-            }
-        });
-    }, []);
+    useEffect(()=>{
+        if(!userId) return ;
 
-    return (
+        appwriteService.getPosts([Query.equal('userId', userId)
+
+        ]).then((posts)=>{
+          if(posts)
+             { setPosts(posts.documents)
+                setLoading(false)
+             }
+
+        })
+    },[userId])
+    if(posts.length==0){
+        return (
+            <div className="flex justify-center items-center min-h-screen text-4xl text-white">
+                <h1>
+                    No posts uploaded yet 
+                    Upload some posts!
+                    🙃
+                </h1>
+            </div>
+        )
+    }
+    if(!loading){
+         return (
         <div className="w-full py-8">
             <Container>
                 <div className="flex flex-wrap min-h-screen">
@@ -37,6 +58,15 @@ const AllPosts = () => {
             </Container>
         </div>
     );
+    }
+    if(loading){
+        return(
+            <div className="justify-center flex ">
+                posts are loading...
+            </div>
+        );
+    }
+   
 };
 
 export default AllPosts;

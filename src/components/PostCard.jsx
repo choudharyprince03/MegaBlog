@@ -18,12 +18,13 @@ const PostCard = ({ $id, title, featuredImage }) => {
       ">
         <div className="w-full mb-4 flex justify-center">
           <img
-            src={appwriteService.getFilePreview(featuredImage)}
+            src={ appwriteService.getFilePreview(featuredImage)}
             alt={title}
             className="rounded-xl w-full object-cover"
           />
+          
         </div>
-
+        { console.log("PostCard rendered:", title)}
         <h2 className="text-lg md:text-xl font-bold">
           {title}
         </h2>
