@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/config";
@@ -18,7 +18,8 @@ export default function PostForm({ post }) {
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
-
+  const [isLoading, setIsLoading] = useState(false);
+  console.log('userData: ',userData); 
   // -------------------------------------------------------------------
   // SAFARI FIX → Convert HEIC to JPG
   // -------------------------------------------------------------------
@@ -58,6 +59,12 @@ export default function PostForm({ post }) {
   // SUBMIT
   // -------------------------------------------------------------------
   const submit = async (data) => {
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+
+    setIsLoading(true);
     try {
       let fileID = post?.featuredImage || null;
 
@@ -101,6 +108,7 @@ export default function PostForm({ post }) {
     } catch (e) {
       console.error("Safari PostForm Error:", e);
       alert("Something went wrong. Try again.");
+      setIsLoading(false);
     }
   };
 
@@ -172,8 +180,15 @@ export default function PostForm({ post }) {
         defaultValue={getValues("content")}
       />
 
-      <Button type="submit" className="w-full p-4 rounded-xl">
-        {post ? "Update" : "Submit"}
+      <Button type="submit" className="w-full p-4 rounded-xl" disabled={isLoading}>
+        {isLoading ? (
+          <span className="flex items-center justify-center gap-2">
+            <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            {post ? "Updating..." : "Submitting..."}
+          </span>
+        ) : (
+          post ? "Update" : "Submit"
+        )}
       </Button>
     </form>
   );

@@ -25,9 +25,19 @@ function App() {
   useEffect(() => {
     authService.getCurrentUser()
       .then((user) => {
+        console.log("App.jsx - Auth check result:", user);
         // authSlice expects payload shaped as { userData }
-        if (user) dispatch(login({ userData: user }));
-        else dispatch(logout());
+        if (user) {
+          console.log("User authenticated, dispatching login with:", user);
+          dispatch(login({ userData: user }));
+        } else {
+          console.log("No user found, dispatching logout");
+          dispatch(logout());
+        }
+      })
+      .catch((error) => {
+        console.error("Auth check failed:", error);
+        dispatch(logout());
       })
       .finally(() => setLoading(false));
   }, [dispatch]);

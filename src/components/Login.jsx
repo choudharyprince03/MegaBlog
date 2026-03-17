@@ -15,15 +15,24 @@ const Login = () => {
     const login = async(data)=>{
       setError('')
       try {
-        const session = await authService.login(data); 
+        console.log("Attempting login with:", data.email);
+        const session = await authService.login(data);
+        console.log("Login session created:", session);
         if(session){
           const userData = await authService.getCurrentUser();
+          console.log("Retrieved user data after login:", userData);
           if(userData){
-            dispatch(authLogin(userData)); 
+            console.log("Dispatching login action with userData:", userData);
+            dispatch(authLogin({ userData })); 
+          } else {
+            console.warn("getUserData returned null/undefined after login");
+            setError("Failed to retrieve user data after login");
+            return;
           }
           navigate("/");
         }
       } catch (error) {
+        console.error("Login error:", error);
         setError(error.message); 
       }
     }

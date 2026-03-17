@@ -1,12 +1,14 @@
-import { Container,PostForm } from "../components"
+import { Container,PostForm, AuthLayout } from "../components"
 
 const AddPosts = () => {
   return (
-    <div className="py-8">
+    <AuthLayout requiredAuth={true}>
+      <div className="py-8">
         <Container> 
              <PostForm />
         </Container>
-    </div>
+      </div>
+    </AuthLayout>
   )
 }
 
