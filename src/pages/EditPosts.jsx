@@ -26,7 +26,7 @@ const EditPost = () => {
             await appwriteService.deletePost(post.$id).then((status) => {
                 if (status) {
                     appwriteService.deleteFile(post.featuredImage);
-                    navigate("/");
+                    navigate("/my-posts");
                 }
             });
         }

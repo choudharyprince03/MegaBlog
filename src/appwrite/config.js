@@ -24,7 +24,7 @@ export class Services{
                 slug,
                 {
                     title, 
-                    content,
+                    content: content.substring(0, 10000), // Truncate to 10000 chars
                     featuredImage, 
                     status,
                     userId
@@ -43,7 +43,7 @@ export class Services{
                 slug, 
                 {
                     title, 
-                    content,
+                    content: content.substring(0, 10000), // Truncate to 10000 chars
                     featuredImage, 
                     status
                 }
