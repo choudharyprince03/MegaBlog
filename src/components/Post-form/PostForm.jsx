@@ -58,11 +58,6 @@ export default function PostForm({ post }) {
   // SUBMIT
   // -------------------------------------------------------------------
   const submit = async (data) => {
-    if (!userData) {
-      alert("User not authenticated. Please login first.");
-      return;
-    }
-
     try {
       let fileID = post?.featuredImage || null;
 
