@@ -15,6 +15,15 @@ export class Services{
         this.databases = new Databases(this.client); 
         this.bucket = new Storage(this.client); 
     }
+
+    handleError(method, error) {
+        console.error(`Appwrite service :: ${method} :: error`, {
+            message: error.message || error,
+            code: error.code,
+            stack: error.stack,
+            timestamp: new Date().toISOString()
+        });
+    }
     
     async createPost({title, slug, content, featuredImage, status, userId }){
         try {
@@ -31,7 +40,7 @@ export class Services{
                 }
             )
         } catch (error) {
-             console.log("Appwrite serive :: createPost :: error", error);
+             this.handleError('createPost', error);
         }
     }
 
@@ -49,7 +58,7 @@ export class Services{
                 }
             )
         } catch (error) {
-            console.log("Appwrite serive :: updatePost :: error", error);
+            this.handleError('updatePost', error);
 
         }
     }
@@ -64,7 +73,7 @@ export class Services{
         } 
         
         catch (error) {
-             console.log("Appwrite serive :: deletePost :: error", error);
+             this.handleError('deletePost', error);
             return false
         }
    
@@ -79,7 +88,7 @@ export class Services{
             )
 
         } catch (error) {
-           console.log("Appwrite serive :: getPost :: error", error);
+           this.handleError('getPost', error);
             return false;
         }
     }
@@ -93,7 +102,7 @@ export class Services{
             )
             
         } catch (error) {
-           console.log("Appwrite serive :: getPosts :: error", error);
+           this.handleError('getPosts', error);
             return false
         }
 
@@ -108,7 +117,7 @@ export class Services{
                 )
 
         } catch (error) {
-              console.log("Appwrite serive :: uploadFile :: error", error);
+              this.handleError('uploadFile', error);
             return false 
         }
     }
@@ -121,7 +130,7 @@ export class Services{
             return true ; 
             
         } catch (error) {
-            console.log("Appwrite serive :: deleteFile :: error", error);
+            this.handleError('deleteFile', error);
             return false 
         }
     }
